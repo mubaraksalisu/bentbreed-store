@@ -12,9 +12,20 @@ datasource db {
   provider = "postgresql"
 }
 
-model Product {
-  id              Int     @id @default(autoincrement())
-  name            String
-  unitPrice       Int
-  quantityInStock Int
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id              String   @id @default(uuid())
+  firstName       String
+  lastName        String
+  phoneNumber     String   @unique
+  email           String   @unique
+  password        String
+  role            Role     @default(USER)
+  isEmailVerified Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
