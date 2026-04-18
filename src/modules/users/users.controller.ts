@@ -22,6 +22,15 @@ export default class UsersController {
     }
   };
 
+  find = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await this.usersService.find();
+      res.status(200).json(users);
+    } catch (err) {
+      next(err);
+    }
+  };
+
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = await this.usersService.update(

@@ -39,6 +39,11 @@ export default class UsersService {
     return foundUser;
   }
 
+  async find() {
+    const users = await this.userRepository.find();
+    return users.map(({ password, isEmailVerified, ...user }) => user);
+  }
+
   async update(id: string, data: Partial<CreateUserDto>) {
     const user = await this.userRepository.findById(id);
     if (!user) throw new NotFoundError("No user found with the provided id");

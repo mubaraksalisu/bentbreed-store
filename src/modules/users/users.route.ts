@@ -16,10 +16,11 @@ const usersRepository = new UserRepository();
 const usersService = new UsersService(usersRepository);
 const usersController = new UsersController(usersService);
 
-const { register, findById, update, remove } = usersController;
+const { register, findById, find, update, remove } = usersController;
 
 router.post("/register", validateReqBody(registerSchema), register);
 router.get("/:id", validateReqParams(idParamSchema), findById);
+router.get("/", find);
 router.patch(
   "/:id",
   [validateReqParams(idParamSchema), validateReqBody(updateSchema)],

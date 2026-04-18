@@ -49,4 +49,8 @@ export default class UserRepository {
       },
     });
   }
+
+  find() {
+    return prisma.user.findMany();
+  }
 }
