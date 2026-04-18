@@ -21,4 +21,13 @@ export default class UsersController {
       next(err);
     }
   };
+
+  update = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await this.usersService.update(req.params.id as string, req.body);
+      res.sendStatus(204);
+    } catch (err) {
+      next(err);
+    }
+  };
 }

@@ -38,4 +38,32 @@ export default class UsersService {
     const { password, isEmailVerified, ...foundUser } = user;
     return foundUser;
   }
+
+  async update(id: string, data: Partial<CreateUserDto>) {
+    const user = await this.userRepository.findById(id);
+    if (!user) throw new NotFoundError("No user found with the provided id");
+
+    if (data.email) {
+      const emailExists = await this.userRepository.findByEmail(data.email);
+      if (emailExists && emailExists.id !== id)
+        throw new BadRequestError("User with this email already exists");
+    }
+
+    if (data.phoneNumber) {
+      const phoneExists = await this.userRepository.findByPhoneNumber(
+        data.phoneNumber,
+      );
+      if (phoneExists && phoneExists.id !== id)
+        throw new BadRequestError("User with this phone number already exists");
+    }
+
+    if (data.password) {
+      const salt = await bcrypt.genSalt(10);
+      data.password = await bcrypt.hash(data.password, salt);
+    }
+
+    const updatedUser = await this.userRepository.update(id, data);
+    const { password, isEmailVerified, ...result } = updatedUser;
+    return result;
+  }
 }

@@ -32,4 +32,13 @@ export default class UserRepository {
       },
     });
   }
+
+  update(id: string, data: Partial<CreateUserDto>) {
+    return prisma.user.update({
+      where: {
+        id,
+      },
+      data,
+    });
+  }
 }
