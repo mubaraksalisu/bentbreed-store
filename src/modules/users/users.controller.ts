@@ -12,4 +12,13 @@ export default class UsersController {
       next(err);
     }
   };
+
+  findById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = await this.usersService.findById(req.params.id as string);
+      res.status(200).json(user);
+    } catch (err) {
+      next(err);
+    }
+  };
 }

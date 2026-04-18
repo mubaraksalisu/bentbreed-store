@@ -3,6 +3,7 @@ import UserRepository from "./users.repository";
 import { CreateUserDto } from "./users.types";
 import * as bcrypt from "bcrypt";
 import BadRequestError from "../../common/errors/bad-request.error";
+import NotFoundError from "../../common/errors/not-found.error";
 
 export default class UsersService {
   constructor(private userRepository: UserRepository) {}
@@ -26,5 +27,15 @@ export default class UsersService {
     });
     const { password, isEmailVerified, ...newUser } = user;
     return newUser;
+  }
+
+  async findById(
+    id: string,
+  ): Promise<Omit<User, "password" | "isEmailVerified"> | null> {
+    const user = await this.userRepository.findById(id);
+    if (!user) throw new NotFoundError("No user found with the provided id");
+
+    const { password, isEmailVerified, ...foundUser } = user;
+    return foundUser;
   }
 }

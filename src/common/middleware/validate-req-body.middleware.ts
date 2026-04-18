@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Schema } from "joi";
 import BadRequestError from "../errors/bad-request.error";
 
-export const validate =
+export const validateReqBody =
   (schema: Schema) => (req: Request, res: Response, next: NextFunction) => {
     const { error, value } = schema.validate(req.body, {
       abortEarly: false,
