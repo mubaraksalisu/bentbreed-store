@@ -66,4 +66,11 @@ export default class UsersService {
     const { password, isEmailVerified, ...result } = updatedUser;
     return result;
   }
+
+  async remove(id: string) {
+    let user = await this.userRepository.findById(id);
+    if (!user) throw new NotFoundError("No user found with the provided id");
+
+    await this.userRepository.remove(id);
+  }
 }

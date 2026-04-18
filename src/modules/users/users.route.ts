@@ -16,7 +16,7 @@ const usersRepository = new UserRepository();
 const usersService = new UsersService(usersRepository);
 const usersController = new UsersController(usersService);
 
-const { register, findById, update } = usersController;
+const { register, findById, update, remove } = usersController;
 
 router.post("/register", validateReqBody(registerSchema), register);
 router.get("/:id", validateReqParams(idParamSchema), findById);
@@ -25,5 +25,6 @@ router.patch(
   [validateReqParams(idParamSchema), validateReqBody(updateSchema)],
   update,
 );
+router.delete("/:id", validateReqParams(idParamSchema), remove);
 
 export default router;

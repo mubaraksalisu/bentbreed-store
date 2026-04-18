@@ -41,4 +41,12 @@ export default class UserRepository {
       data,
     });
   }
+
+  remove(id: string) {
+    return prisma.user.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }

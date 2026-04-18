@@ -24,8 +24,20 @@ export default class UsersController {
 
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.usersService.update(req.params.id as string, req.body);
-      res.sendStatus(204);
+      const user = await this.usersService.update(
+        req.params.id as string,
+        req.body,
+      );
+      res.status(200).json(user);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  remove = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await this.usersService.remove(req.params.id as string);
+      res.status(204);
     } catch (err) {
       next(err);
     }
