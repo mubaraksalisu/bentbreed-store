@@ -74,4 +74,19 @@ describe("UsersService", () => {
       );
     });
   });
+
+  describe("find", () => {
+    it("should return all users", async () => {
+      const { password, ...rest } = userData;
+      const findResponse = [
+        {
+          id: "user-id",
+          ...rest,
+        },
+      ];
+      userRepository.find.mockResolvedValue(findResponse);
+      const result = await usersService.find();
+      expect(result).toEqual(findResponse);
+    });
+  });
 });
