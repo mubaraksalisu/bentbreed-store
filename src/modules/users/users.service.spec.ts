@@ -140,4 +140,19 @@ describe("UsersService", () => {
       ).rejects.toThrow("User with this phone number already exists");
     });
   });
+
+  describe("remove", () => {
+    it("should remove user", async () => {
+      userRepository.findById.mockResolvedValue({ ...userData, id: "user-id" });
+      await usersService.remove("user-id");
+      expect(userRepository.remove).toHaveBeenCalledWith("user-id");
+    });
+
+    it("should throw an error if user not found", async () => {
+      userRepository.findById.mockResolvedValue(null);
+      await expect(usersService.remove("non-existent-id")).rejects.toThrow(
+        "No user found with the provided id",
+      );
+    });
+  });
 });
