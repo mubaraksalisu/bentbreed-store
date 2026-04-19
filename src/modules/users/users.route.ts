@@ -3,12 +3,12 @@ import UserRepository from "./users.repository";
 import UsersService from "./users.service";
 import UsersController from "./users.controller";
 import { validateReqBody } from "../../common/middleware/validate-req-body.middleware";
+import { validateReqParams } from "../../common/middleware/validate-req-params.middleware";
 import {
   idParamSchema,
   registerSchema,
   updateSchema,
 } from "./users.validation";
-import { validateReqParams } from "../../common/middleware/validate-req-params.middleware";
 
 const router = express.Router();
 
