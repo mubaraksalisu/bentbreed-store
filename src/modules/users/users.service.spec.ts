@@ -30,14 +30,14 @@ describe("UsersService", () => {
       const { password, ...rest } = userData;
       const createUserResponse = {
         id: "user-id",
-        ...rest,
+        ...userData,
       };
 
       userRepository.findByEmail.mockResolvedValue(null);
       userRepository.findByPhoneNumber.mockResolvedValue(null);
       userRepository.create.mockResolvedValue(createUserResponse);
       const result = await usersService.create(userData);
-      expect(result).toEqual(createUserResponse);
+      expect(result).toEqual({ id: "user-id", ...rest });
     });
 
     it("should throw an error if email already exists", async () => {
@@ -60,11 +60,11 @@ describe("UsersService", () => {
       const { password, ...rest } = userData;
       const findByIdResponse = {
         id: "user-id",
-        ...rest,
+        ...userData,
       };
       userRepository.findById.mockResolvedValue(findByIdResponse);
       const result = await usersService.findById("user-id");
-      expect(result).toEqual(findByIdResponse);
+      expect(result).toEqual({ id: "user-id", ...rest });
     });
 
     it("should throw an error if user not found", async () => {
@@ -81,12 +81,63 @@ describe("UsersService", () => {
       const findResponse = [
         {
           id: "user-id",
-          ...rest,
+          ...userData,
         },
       ];
       userRepository.find.mockResolvedValue(findResponse);
       const result = await usersService.find();
-      expect(result).toEqual(findResponse);
+      expect(result).toEqual([{ id: "user-id", ...rest }]);
+    });
+  });
+
+  describe("update", () => {
+    it("should update user data", async () => {
+      const updatedData = {
+        firstName: "Updated",
+        email: "updated@example.com",
+      };
+
+      const { password, ...rest } = userData;
+      const updatedUserResponse = {
+        id: "user-id",
+        ...userData,
+        ...updatedData,
+      };
+
+      userRepository.findById.mockResolvedValue({ ...userData, id: "user-id" });
+      userRepository.update.mockResolvedValue(updatedUserResponse);
+      const result = await usersService.update("user-id", updatedData);
+      expect(result).toEqual({ id: "user-id", ...rest, ...updatedData });
+      expect(userRepository.findById).toHaveBeenCalledWith("user-id");
+    });
+
+    it("should throw an error if user not found", async () => {
+      userRepository.findById.mockResolvedValue(null);
+      await expect(
+        usersService.update("non-existent-id", { firstName: "Updated" }),
+      ).rejects.toThrow("No user found with the provided id");
+    });
+
+    it("should throw an error if email already exists", async () => {
+      userRepository.findById.mockResolvedValue({ ...userData, id: "user-id" });
+      userRepository.findByEmail.mockResolvedValue({
+        ...userData,
+        id: "another-user-id",
+      });
+      await expect(
+        usersService.update("user-id", { email: "existing@example.com" }),
+      ).rejects.toThrow("User with this email already exists");
+    });
+
+    it("should throw an error if phone number already exists", async () => {
+      userRepository.findById.mockResolvedValue({ ...userData, id: "user-id" });
+      userRepository.findByPhoneNumber.mockResolvedValue({
+        ...userData,
+        id: "another-user-id",
+      });
+      await expect(
+        usersService.update("user-id", { phoneNumber: "0987654321" }),
+      ).rejects.toThrow("User with this phone number already exists");
     });
   });
 });
