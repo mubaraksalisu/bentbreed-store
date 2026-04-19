@@ -54,4 +54,24 @@ describe("UsersService", () => {
       );
     });
   });
+
+  describe("findById", () => {
+    it("should return user by id", async () => {
+      const { password, ...rest } = userData;
+      const findByIdResponse = {
+        id: "user-id",
+        ...rest,
+      };
+      userRepository.findById.mockResolvedValue(findByIdResponse);
+      const result = await usersService.findById("user-id");
+      expect(result).toEqual(findByIdResponse);
+    });
+
+    it("should throw an error if user not found", async () => {
+      userRepository.findById.mockResolvedValue(null);
+      await expect(usersService.findById("non-existent-id")).rejects.toThrow(
+        "No user found with the provided id",
+      );
+    });
+  });
 });
