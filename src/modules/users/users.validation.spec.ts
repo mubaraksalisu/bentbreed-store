@@ -92,4 +92,25 @@ describe("Users Validation", () => {
       );
     });
   });
+
+  describe("ID Param Schema", () => {
+    it("should accept valid UUID", () => {
+      const { error } = idParamSchema.validate({
+        id: "550e8400-e29b-41d4-a716-446655440000",
+      });
+      expect(error).toBeUndefined();
+    });
+
+    it("should reject invalid UUID", () => {
+      const { error } = idParamSchema.validate({ id: "invalid-uuid" });
+      expect(error).toBeDefined();
+      expect(error?.details[0].message).toContain('"id" must be a valid GUID');
+    });
+
+    it("should reject missing ID", () => {
+      const { error } = idParamSchema.validate({});
+      expect(error).toBeDefined();
+      expect(error?.details[0].message).toContain('"id" is required');
+    });
+  });
 });
