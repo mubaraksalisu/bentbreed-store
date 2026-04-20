@@ -1,5 +1,9 @@
 import { expectValid } from "../../common/utils/test-validation.util";
-import { registerSchema } from "./users.validation";
+import {
+  idParamSchema,
+  registerSchema,
+  updateSchema,
+} from "./users.validation";
 
 describe("Users Validation", () => {
   const userData = {
@@ -70,6 +74,22 @@ describe("Users Validation", () => {
       expect(value.firstName).toBe("John");
       expect(value.lastName).toBe("Doe");
       expect(value.phoneNumber).toBe("1234567890");
+    });
+  });
+
+  describe("Update Schema", () => {
+    it("should accept valid partial user data", () => {
+      const partialData = { email: "john.new@example.com" };
+      const { error } = updateSchema.validate(partialData);
+      expect(error).toBeUndefined();
+    });
+
+    it("should reject empty payload", () => {
+      const { error } = updateSchema.validate({});
+      expect(error).toBeDefined();
+      expect(error?.details[0].message).toContain(
+        "must contain at least one of [firstName, lastName, phoneNumber, email, password]",
+      );
     });
   });
 });
