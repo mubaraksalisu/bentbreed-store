@@ -1,6 +1,7 @@
 import request from "supertest";
 import app from "../../src/app";
 import prisma from "../../src/infrastructure/database/prisma";
+import { randomUUID } from "node:crypto";
 
 describe("/api/users", () => {
   beforeEach(async () => {
@@ -51,6 +52,38 @@ describe("/api/users", () => {
       expect(res.body.message).toEqual(
         "User with this phone number already exists",
       );
+    });
+  });
+
+  describe("GET /:id", () => {
+    it("should retrieve a user by ID", async () => {
+      const createRes = await request(app)
+        .post("/api/users/register")
+        .send(userData);
+      const userId = createRes.body.id;
+
+      const res = await request(app).get(`/api/users/${userId}`);
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toHaveProperty("id", userId);
+      expect(res.body).toHaveProperty("firstName", userData.firstName);
+      expect(res.body).toHaveProperty("lastName", userData.lastName);
+      expect(res.body).toHaveProperty("email", userData.email);
+      expect(res.body).toHaveProperty("phoneNumber", userData.phoneNumber);
+      expect(res.body).not.toHaveProperty("password");
+    });
+
+    it("should return 404 for non-existent user", async () => {
+      const res = await request(app).get(`/api/users/${randomUUID()}`);
+
+      expect(res.statusCode).toEqual(404);
+      expect(res.body.message).toEqual("No user found with the provided id");
+    });
+
+    it("should return 400 for invalid ID format", async () => {
+      const res = await request(app).get(`/api/users/invalid-id`);
+
+      expect(res.statusCode).toEqual(400);
     });
   });
 });
