@@ -1,22 +1,25 @@
 import { Request, Response } from "express";
 import UsersService from "./users.service";
+import BaseController from "../../common/controllers/base.controller";
 
-export default class UsersController {
-  constructor(private usersService: UsersService) {}
+export default class UsersController extends BaseController {
+  constructor(private usersService: UsersService) {
+    super();
+  }
 
   register = async (req: Request, res: Response) => {
     const user = await this.usersService.create(req.body);
-    res.status(201).json(user);
+    return this.created(res, user, "User registered successfully");
   };
 
   findById = async (req: Request, res: Response) => {
     const user = await this.usersService.findById(req.params.id as string);
-    res.status(200).json(user);
+    return this.ok(res, user, "User retrieved successfully");
   };
 
   find = async (req: Request, res: Response) => {
     const { users, meta } = await this.usersService.find(req.query);
-    res.status(200).json({ users, meta });
+    return this.ok(res, users, "Users retrieved successfully", 200, meta);
   };
 
   update = async (req: Request, res: Response) => {
@@ -24,11 +27,11 @@ export default class UsersController {
       req.params.id as string,
       req.body,
     );
-    res.status(200).json(user);
+    return this.ok(res, user, "User updated successfully");
   };
 
   remove = async (req: Request, res: Response) => {
     await this.usersService.remove(req.params.id as string);
-    res.status(204);
+    return this.ok(res, null, "User removed successfully", 204);
   };
 }
