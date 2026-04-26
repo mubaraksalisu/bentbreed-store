@@ -15,8 +15,8 @@ export default class UsersController {
   };
 
   find = async (req: Request, res: Response) => {
-    const users = await this.usersService.find();
-    res.status(200).json(users);
+    const { users, meta } = await this.usersService.find(req.query);
+    res.status(200).json({ users, meta });
   };
 
   update = async (req: Request, res: Response) => {

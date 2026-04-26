@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import HttpError from "../errors/http.error";
+import { ApiResponse } from "../utils/api-response";
 
 export const errorHandler = (
   err: any,
@@ -13,9 +14,5 @@ export const errorHandler = (
   const message =
     err instanceof HttpError ? err.message : "Internal Server Error";
 
-  res.status(statusCode).json({
-    statusCode,
-    message,
-    timestamp: new Date().toISOString(),
-  });
+  ApiResponse.error(res, message, statusCode);
 };

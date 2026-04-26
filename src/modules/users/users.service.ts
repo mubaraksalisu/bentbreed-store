@@ -4,6 +4,8 @@ import { CreateUserDto } from "./users.types";
 import * as bcrypt from "bcrypt";
 import BadRequestError from "../../common/errors/bad-request.error";
 import NotFoundError from "../../common/errors/not-found.error";
+import { get } from "node:http";
+import { getPagination } from "../../common/utils/pagination";
 
 export default class UsersService {
   constructor(private userRepository: UserRepository) {}
@@ -39,9 +41,13 @@ export default class UsersService {
     return foundUser;
   }
 
-  async find() {
-    const users = await this.userRepository.find();
-    return users.map(({ password, isEmailVerified, ...user }) => user);
+  async find(query: any) {
+    const { limit, skip, page } = getPagination(query);
+    const { data, total } = await this.userRepository.find({ limit, skip });
+    return {
+      users: data.map(({ password, isEmailVerified, ...user }) => user),
+      meta: { limit, page, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async update(id: string, data: Partial<CreateUserDto>) {

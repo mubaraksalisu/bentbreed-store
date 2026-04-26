@@ -50,7 +50,15 @@ export default class UserRepository {
     });
   }
 
-  find() {
-    return prisma.user.findMany();
+  async find(pagination: { skip: number; limit: number }) {
+    const [data, total] = await Promise.all([
+      prisma.user.findMany({
+        skip: pagination.skip,
+        take: pagination.limit,
+      }),
+      prisma.user.count(),
+    ]);
+
+    return { data, total };
   }
 }
