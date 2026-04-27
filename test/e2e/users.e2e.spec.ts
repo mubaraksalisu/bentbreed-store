@@ -86,4 +86,32 @@ describe("/api/users", () => {
       expect(res.statusCode).toEqual(400);
     });
   });
+
+  describe("GET /", () => {
+    it("should retrieve all users", async () => {
+      const createRes = await request(app)
+        .post("/api/users/register")
+        .send(userData);
+      const userId = createRes.body.data.id;
+
+      const res = await request(app).get("/api/users");
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.data).toBeInstanceOf(Array);
+      expect(res.body.data.length).toEqual(1);
+      expect(res.body.data[0]).toHaveProperty("id", userId);
+      expect(res.body.data[0]).toHaveProperty("firstName", userData.firstName);
+      expect(res.body.data[0]).toHaveProperty("lastName", userData.lastName);
+      expect(res.body.data[0]).toHaveProperty("email", userData.email);
+      expect(res.body.data[0]).toHaveProperty(
+        "phoneNumber",
+        userData.phoneNumber,
+      );
+      expect(res.body.data[0]).not.toHaveProperty("password");
+      expect(res.body.meta).toHaveProperty("limit", 10);
+      expect(res.body.meta).toHaveProperty("page", 1);
+      expect(res.body.meta).toHaveProperty("total", 1);
+      expect(res.body.meta).toHaveProperty("totalPages", 1);
+    });
+  });
 });
