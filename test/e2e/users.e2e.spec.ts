@@ -152,4 +152,30 @@ describe("/api/users", () => {
       expect(res.statusCode).toEqual(400);
     });
   });
+
+  describe("DELETE /:id", () => {
+    it("should delete a user", async () => {
+      const createRes = await request(app)
+        .post("/api/users/register")
+        .send(userData);
+      const userId = createRes.body.data.id;
+
+      const res = await request(app).delete(`/api/users/${userId}`);
+
+      expect(res.statusCode).toEqual(204);
+    });
+
+    it("should return 404 for non-existent user", async () => {
+      const res = await request(app).delete(`/api/users/${randomUUID()}`);
+
+      expect(res.statusCode).toEqual(404);
+      expect(res.body.message).toEqual("No user found with the provided id");
+    });
+
+    it("should return 400 for invalid ID format", async () => {
+      const res = await request(app).delete(`/api/users/invalid-id`);
+
+      expect(res.statusCode).toEqual(400);
+    });
+  });
 });
