@@ -84,9 +84,15 @@ describe("UsersService", () => {
           ...userData,
         },
       ];
-      userRepository.find.mockResolvedValue(findResponse);
-      const result = await usersService.find();
-      expect(result).toEqual([{ id: "user-id", ...rest }]);
+      userRepository.find.mockResolvedValue({ data: findResponse, total: 1 });
+      const result = await usersService.find({ page: 1, limit: 10 });
+      expect(result.users).toEqual([{ id: "user-id", ...rest }]);
+      expect(result.meta).toEqual({
+        limit: 10,
+        page: 1,
+        total: 1,
+        totalPages: 1,
+      });
     });
   });
 

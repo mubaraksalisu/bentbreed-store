@@ -26,12 +26,12 @@ describe("/api/users", () => {
       const res = await request(app).post("/api/users/register").send(userData);
 
       expect(res.statusCode).toEqual(201);
-      expect(res.body).toHaveProperty("id");
-      expect(res.body).toHaveProperty("firstName", userData.firstName);
-      expect(res.body).toHaveProperty("lastName", userData.lastName);
-      expect(res.body).toHaveProperty("email", userData.email);
-      expect(res.body).toHaveProperty("phoneNumber", userData.phoneNumber);
-      expect(res.body).not.toHaveProperty("password");
+      expect(res.body.data).toHaveProperty("id");
+      expect(res.body.data).toHaveProperty("firstName", userData.firstName);
+      expect(res.body.data).toHaveProperty("lastName", userData.lastName);
+      expect(res.body.data).toHaveProperty("email", userData.email);
+      expect(res.body.data).toHaveProperty("phoneNumber", userData.phoneNumber);
+      expect(res.body.data).not.toHaveProperty("password");
     });
 
     it("should not create a user with existing email", async () => {
@@ -60,17 +60,17 @@ describe("/api/users", () => {
       const createRes = await request(app)
         .post("/api/users/register")
         .send(userData);
-      const userId = createRes.body.id;
+      const userId = createRes.body.data.id;
 
       const res = await request(app).get(`/api/users/${userId}`);
 
       expect(res.statusCode).toEqual(200);
-      expect(res.body).toHaveProperty("id", userId);
-      expect(res.body).toHaveProperty("firstName", userData.firstName);
-      expect(res.body).toHaveProperty("lastName", userData.lastName);
-      expect(res.body).toHaveProperty("email", userData.email);
-      expect(res.body).toHaveProperty("phoneNumber", userData.phoneNumber);
-      expect(res.body).not.toHaveProperty("password");
+      expect(res.body.data).toHaveProperty("id", userId);
+      expect(res.body.data).toHaveProperty("firstName", userData.firstName);
+      expect(res.body.data).toHaveProperty("lastName", userData.lastName);
+      expect(res.body.data).toHaveProperty("email", userData.email);
+      expect(res.body.data).toHaveProperty("phoneNumber", userData.phoneNumber);
+      expect(res.body.data).not.toHaveProperty("password");
     });
 
     it("should return 404 for non-existent user", async () => {
