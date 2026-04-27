@@ -1,4 +1,7 @@
-import { expectValid } from "../../common/utils/test-validation.util";
+import {
+  expectInvalid,
+  expectValid,
+} from "../../common/utils/test-validation.util";
 import {
   idParamSchema,
   registerSchema,
@@ -21,45 +24,27 @@ describe("Users Validation", () => {
 
     it("should reject missing required fields", () => {
       const { firstName, ...invalidData } = userData;
-      const { error } = registerSchema.validate(invalidData);
-      expect(error).toBeDefined();
-      expect(error?.details[0].message).toContain('"firstName" is required');
+      expectInvalid(registerSchema, invalidData, "firstName");
     });
 
     it("should reject invalid email format", () => {
       const invalidData = { ...userData, email: "invalid-email" };
-      const { error } = registerSchema.validate(invalidData);
-      expect(error).toBeDefined();
-      expect(error?.details[0].message).toContain(
-        '"email" must be a valid email',
-      );
+      expectInvalid(registerSchema, invalidData, "email");
     });
 
     it("should reject short password", () => {
       const invalidData = { ...userData, password: "123" };
-      const { error } = registerSchema.validate(invalidData);
-      expect(error).toBeDefined();
-      expect(error?.details[0].message).toContain(
-        '"password" length must be at least 6 characters long',
-      );
+      expectInvalid(registerSchema, invalidData, "password");
     });
 
     it("should reject long first name", () => {
       const invalidData = { ...userData, firstName: "A".repeat(101) };
-      const { error } = registerSchema.validate(invalidData);
-      expect(error).toBeDefined();
-      expect(error?.details[0].message).toContain(
-        '"firstName" length must be less than or equal to 100 characters long',
-      );
+      expectInvalid(registerSchema, invalidData, "firstName");
     });
 
     it("Should reject phone number if not string", () => {
       const invalidData = { ...userData, phoneNumber: 1234567890 };
-      const { error } = registerSchema.validate(invalidData);
-      expect(error).toBeDefined();
-      expect(error?.details[0].message).toContain(
-        '"phoneNumber" must be a string',
-      );
+      expectInvalid(registerSchema, invalidData, "phoneNumber");
     });
 
     it("Should trim whitespace from string fields", () => {
@@ -80,37 +65,31 @@ describe("Users Validation", () => {
   describe("Update Schema", () => {
     it("should accept valid partial user data", () => {
       const partialData = { email: "john.new@example.com" };
-      const { error } = updateSchema.validate(partialData);
-      expect(error).toBeUndefined();
+      expectValid(updateSchema, partialData);
     });
 
     it("should reject empty payload", () => {
-      const { error } = updateSchema.validate({});
-      expect(error).toBeDefined();
-      expect(error?.details[0].message).toContain(
-        "must contain at least one of [firstName, lastName, phoneNumber, email, password]",
+      expectInvalid(
+        updateSchema,
+        {},
+        "[firstName, lastName, phoneNumber, email, password]",
       );
     });
   });
 
   describe("ID Param Schema", () => {
     it("should accept valid UUID", () => {
-      const { error } = idParamSchema.validate({
+      expectValid(idParamSchema, {
         id: "550e8400-e29b-41d4-a716-446655440000",
       });
-      expect(error).toBeUndefined();
     });
 
     it("should reject invalid UUID", () => {
-      const { error } = idParamSchema.validate({ id: "invalid-uuid" });
-      expect(error).toBeDefined();
-      expect(error?.details[0].message).toContain('"id" must be a valid GUID');
+      expectInvalid(idParamSchema, { id: "invalid-uuid" }, "id");
     });
 
     it("should reject missing ID", () => {
-      const { error } = idParamSchema.validate({});
-      expect(error).toBeDefined();
-      expect(error?.details[0].message).toContain('"id" is required');
+      expectInvalid(idParamSchema, {}, "id");
     });
   });
 });
