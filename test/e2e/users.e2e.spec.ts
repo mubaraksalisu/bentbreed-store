@@ -114,4 +114,42 @@ describe("/api/users", () => {
       expect(res.body.meta).toHaveProperty("totalPages", 1);
     });
   });
+
+  describe("PATCH /:id", () => {
+    it("should update a user", async () => {
+      const createRes = await request(app)
+        .post("/api/users/register")
+        .send(userData);
+      const userId = createRes.body.data.id;
+
+      const res = await request(app)
+        .patch(`/api/users/${userId}`)
+        .send({ firstName: "Jane" });
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.data).toHaveProperty("id", userId);
+      expect(res.body.data).toHaveProperty("firstName", "Jane");
+      expect(res.body.data).toHaveProperty("lastName", userData.lastName);
+      expect(res.body.data).toHaveProperty("email", userData.email);
+      expect(res.body.data).toHaveProperty("phoneNumber", userData.phoneNumber);
+      expect(res.body.data).not.toHaveProperty("password");
+    });
+
+    it("should return 404 for non-existent user", async () => {
+      const res = await request(app)
+        .patch(`/api/users/${randomUUID()}`)
+        .send({ firstName: "Jane" });
+
+      expect(res.statusCode).toEqual(404);
+      expect(res.body.message).toEqual("No user found with the provided id");
+    });
+
+    it("should return 400 for invalid ID format", async () => {
+      const res = await request(app)
+        .patch(`/api/users/invalid-id`)
+        .send({ firstName: "Jane" });
+
+      expect(res.statusCode).toEqual(400);
+    });
+  });
 });
