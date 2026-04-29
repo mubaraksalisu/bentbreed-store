@@ -1,5 +1,6 @@
 import express from "express";
 import users from "./modules/users/users.route";
+import addresses from "./modules/addresses/addresses.route";
 import home from "./modules/home/home.route";
 import { errorHandler } from "./common/middleware/error.middleware";
 import httpLogger from "./common/logger/http-logger.middleware";
@@ -11,6 +12,7 @@ app.use(httpLogger);
 
 app.use("/api", home);
 app.use("/api/users", users);
+app.use("/api/addresses", addresses);
 
 app.use(errorHandler);
 
