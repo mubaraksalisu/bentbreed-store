@@ -30,6 +30,7 @@ model User {
   updatedAt       DateTime @updatedAt
 
   addresses Address[]
+  refreshTokens RefreshToken[]
 }
 
 model Address {
@@ -55,4 +56,14 @@ model Address {
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  hashedToken     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
