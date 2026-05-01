@@ -6,6 +6,7 @@ import UsersService from "../users/users.service";
 import UserRepository from "../users/users.repository";
 import { validateReqBody } from "../../common/middleware/validate-req-body.middleware";
 import { registerSchema } from "../users/users.validation";
+import { loginSchema } from "./auth.validation";
 
 const router = express.Router();
 
@@ -14,8 +15,9 @@ const usersService = new UsersService(new UserRepository());
 const authService = new AuthService(usersService, authRepository);
 const authController = new AuthController(authService);
 
-const { register } = authController;
+const { register, login } = authController;
 
 router.post("/register", validateReqBody(registerSchema), register);
+router.post("/login", validateReqBody(loginSchema), login);
 
 export default router;
