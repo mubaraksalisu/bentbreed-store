@@ -16,4 +16,10 @@ export default class AuthController extends BaseController {
     const tokens = await this.authService.loginUser(email, password);
     this.ok(res, tokens, "User logged in successfully");
   };
+
+  refresh = async (req: any, res: any) => {
+    const { refreshToken } = req.body;
+    const tokens = await this.authService.refreshTokens(refreshToken);
+    this.ok(res, tokens, "Tokens refreshed successfully");
+  };
 }
