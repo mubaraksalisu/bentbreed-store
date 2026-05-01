@@ -4,12 +4,20 @@ import UsersService from "../users/users.service";
 import { LoginUserResponseDto } from "./auth.types";
 import { JwtService } from "../../common/auth/jwt.service";
 import AuthRepository from "./auth.repository";
+import { CreateUserDto } from "../users/users.types";
 
 export default class AuthService {
   constructor(
     private usersService: UsersService,
     private authRepository: AuthRepository,
   ) {}
+
+  async registerUser(data: CreateUserDto) {
+    const newUser = await this.usersService.create(data);
+
+    const { accessToken, refreshToken } = await this.generateTokens(newUser);
+    return { accessToken, refreshToken, user: newUser };
+  }
 
   async loginUser(email: string, password: string) {
     const user = await this.usersService.findByEmail(email);
