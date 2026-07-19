@@ -15,10 +15,11 @@ const usersService = new UsersService(new UserRepository());
 const authService = new AuthService(usersService, authRepository);
 const authController = new AuthController(authService);
 
-const { register, login, refresh } = authController;
+const { register, login, refresh, logout } = authController;
 
 router.post("/register", validateReqBody(registerSchema), register);
 router.post("/login", validateReqBody(loginSchema), login);
 router.post("/refresh", validateReqBody(refreshSchema), refresh);
+router.post("/logout", validateReqBody(refreshSchema), logout);
 
 export default router;
